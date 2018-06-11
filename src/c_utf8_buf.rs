@@ -149,6 +149,12 @@ impl CUtf8Buf {
         self.with_string(|inner| inner.push_str(s));
     }
 
+    /// Appends the given `char` to the end of this `CUtf8Buf`.
+    #[inline]
+    pub fn push(&mut self, c: char) {
+        self.with_string(|inner| inner.push(c));
+    }
+
     /// Converts `self` into a native UTF-8 encoded Rust
     /// [`String`](https://doc.rust-lang.org/std/string/struct.String.html).
     #[inline]
