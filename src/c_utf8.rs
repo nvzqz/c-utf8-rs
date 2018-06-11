@@ -224,6 +224,12 @@ impl CUtf8 {
         &*(s as *const str as *const CUtf8)
     }
 
+    /// Returns a mutable C string without checking for a trailing nul byte.
+    #[inline]
+    pub unsafe fn from_str_unchecked_mut(s: &mut str) -> &mut CUtf8 {
+        &mut *(s as *mut str as *mut CUtf8)
+    }
+
     /// Returns a C string without checking UTF-8 validity.
     #[cfg(feature = "std")]
     #[inline]
