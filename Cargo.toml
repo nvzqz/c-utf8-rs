@@ -4,7 +4,7 @@ version       = "1.0.0"
 authors       = ["Nikolai Vazquez"]
 license       = "MIT/Apache-2.0"
 description   = "UTF-8 encoded C string types"
-documentation = "docs.rs/c_utf8"
+documentation = "https://docs.rs/c_utf8"
 homepage      = "https://github.com/nvzqz/c-utf8-rs"
 
 [dependencies]
