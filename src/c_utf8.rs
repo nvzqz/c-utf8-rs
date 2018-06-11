@@ -2,10 +2,10 @@ use core::fmt;
 use core::str::{self, Utf8Error};
 
 #[cfg(feature = "std")]
-use std::{
-    ffi::{CStr, FromBytesWithNulError, OsStr},
-    path::Path,
-};
+use std::ffi::{CStr, FromBytesWithNulError, OsStr};
+
+#[cfg(feature = "std")]
+use std::path::Path;
 
 use c_char;
 
@@ -177,7 +177,7 @@ impl CUtf8 {
     /// Returns the UTF-8 string if it is terminated by a nul byte.
     #[inline]
     pub fn from_str(s: &str) -> Result<&CUtf8, Error> {
-        if let Some(0) = s.as_bytes().last() {
+        if let Some(&0) = s.as_bytes().last() {
             unsafe { Ok(CUtf8::from_str_unchecked(s)) }
         } else {
             Err(Error::Nul)

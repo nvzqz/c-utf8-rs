@@ -72,7 +72,7 @@ macro_rules! c_utf8 {
 
 mod c_utf8;
 
-pub use self::{c_utf8::*};
+pub use self::c_utf8::*;
 
 /// Equivalent to C's `char` type.
 #[allow(non_camel_case_types)]
