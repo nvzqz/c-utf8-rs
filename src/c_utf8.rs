@@ -131,6 +131,14 @@ impl CUtf8 {
         }
     }
 
+    /// Returns the UTF-8 string if it is terminated by a nul byte.
+    #[inline]
+    pub fn from_str(s: &str) -> Result<&CUtf8, FromBytesWithNulError> {
+        CStr::from_bytes_with_nul(s.as_bytes()).map(|_| unsafe {
+            CUtf8::from_str_unchecked(s)
+        })
+    }
+
     /// Returns the C string if it is valid UTF-8.
     #[inline]
     pub fn from_c_str(c: &CStr) -> Result<&CUtf8, Utf8Error> {
