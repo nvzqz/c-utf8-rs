@@ -74,6 +74,12 @@ mod c_utf8;
 
 pub use self::c_utf8::*;
 
+#[cfg(feature = "std")]
+mod c_utf8_buf;
+
+#[cfg(feature = "std")]
+pub use self::c_utf8_buf::*;
+
 /// Equivalent to C's `char` type.
 #[allow(non_camel_case_types)]
 #[cfg(not(feature = "std"))]
