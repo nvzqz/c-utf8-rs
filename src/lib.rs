@@ -30,7 +30,11 @@
 //! [`CUtf8`]: struct.CUtf8.html
 
 #![deny(missing_docs)]
+#![cfg_attr(not(feature = "std"), no_std)]
 #![cfg_attr(feature = "try_from", feature(try_from))]
+
+#[cfg(feature = "std")]
+use std as core;
 
 /// Creates a [`&'static CUtf8`](struct.CUtf8.html) from a native Rust [`str`]
 /// string literal, making it much easier to work with C APIs that are strict
@@ -69,3 +73,36 @@ macro_rules! c_utf8 {
 mod c_utf8;
 
 pub use self::{c_utf8::*};
+
+/// Equivalent to C's `char` type.
+#[allow(non_camel_case_types)]
+#[cfg(not(feature = "std"))]
+#[cfg(any(all(target_os = "linux", any(target_arch = "aarch64",
+                                       target_arch = "arm",
+                                       target_arch = "powerpc",
+                                       target_arch = "powerpc64",
+                                       target_arch = "s390x")),
+          all(target_os = "android", any(target_arch = "aarch64",
+                                         target_arch = "arm")),
+          all(target_os = "l4re", target_arch = "x86_64"),
+          all(target_os = "openbsd", target_arch = "aarch64"),
+          all(target_os = "fuchsia", target_arch = "aarch64")))]
+pub type c_char = u8;
+
+/// Equivalent to C's `char` type.
+#[allow(non_camel_case_types)]
+#[cfg(not(feature = "std"))]
+#[cfg(not(any(all(target_os = "linux", any(target_arch = "aarch64",
+                                           target_arch = "arm",
+                                           target_arch = "powerpc",
+                                           target_arch = "powerpc64",
+                                           target_arch = "s390x")),
+              all(target_os = "android", any(target_arch = "aarch64",
+                                             target_arch = "arm")),
+              all(target_os = "l4re", target_arch = "x86_64"),
+              all(target_os = "openbsd", target_arch = "aarch64"),
+              all(target_os = "fuchsia", target_arch = "aarch64"))))]
+pub type c_char = i8;
+
+#[cfg(feature = "std")]
+pub use std::os::raw::c_char;

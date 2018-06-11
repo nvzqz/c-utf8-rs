@@ -1,8 +1,13 @@
-use std::ffi::{CStr, FromBytesWithNulError, OsStr};
-use std::fmt;
-use std::os::raw::c_char;
-use std::path::Path;
-use std::str::{self, Utf8Error};
+use core::fmt;
+use core::str::{self, Utf8Error};
+
+#[cfg(feature = "std")]
+use std::{
+    ffi::{CStr, FromBytesWithNulError, OsStr},
+    path::Path,
+};
+
+use c_char;
 
 /// Like [`CStr`](https://doc.rust-lang.org/std/ffi/struct.CStr.html), except
 /// with the guarantee of being encoded as valid [UTF-8].
@@ -33,7 +38,7 @@ mod try_from {
     use std::convert::TryFrom;
 
     impl<'a> TryFrom<&'a [u8]> for &'a CUtf8 {
-        type Error = FromBytesError;
+        type Error = Error;
 
         #[inline]
         fn try_from(bytes: &[u8]) -> Result<&CUtf8, Self::Error> {
@@ -41,6 +46,7 @@ mod try_from {
         }
     }
 
+    #[cfg(feature = "std")]
     impl<'a> TryFrom<&'a CStr> for &'a CUtf8 {
         type Error = Utf8Error;
 
@@ -51,13 +57,18 @@ mod try_from {
     }
 
     impl<'a> TryFrom<&'a str> for &'a CUtf8 {
-        type Error = FromBytesWithNulError;
+        type Error = Error;
 
         #[inline]
         fn try_from(s: &str) -> Result<&CUtf8, Self::Error> {
             CUtf8::from_str(s)
         }
     }
+}
+
+#[cfg(feature = "std")]
+mod std {
+
 }
 
 impl AsRef<str> for CUtf8 {
@@ -67,10 +78,11 @@ impl AsRef<str> for CUtf8 {
     }
 }
 
+#[cfg(feature = "std")]
 impl AsRef<CStr> for CUtf8 {
     #[inline]
     fn as_ref(&self) -> &CStr {
-        self.as_c_str()
+        unsafe { CStr::from_ptr(self.0.as_ptr() as *const c_char) }
     }
 }
 
@@ -81,6 +93,7 @@ impl AsRef<[u8]> for CUtf8 {
     }
 }
 
+#[cfg(feature = "std")]
 impl AsRef<Path> for CUtf8 {
     #[inline]
     fn as_ref(&self) -> &Path {
@@ -88,6 +101,7 @@ impl AsRef<Path> for CUtf8 {
     }
 }
 
+#[cfg(feature = "std")]
 impl AsRef<OsStr> for CUtf8 {
     #[inline]
     fn as_ref(&self) -> &OsStr {
@@ -128,26 +142,27 @@ impl<'a> Default for &'a CUtf8 {
     fn default() -> &'a CUtf8 { c_utf8!("") }
 }
 
-/// The error for [`CUtf8::from_bytes`](struct.CUtf8.html#method.from_bytes).
+/// The error for converting types to [`CUtf8`](struct.CUtf8.html).
 #[derive(Clone, Debug)]
-pub enum FromBytesError {
-    /// An error indicating that a nul byte was not in the expected position.
-    Nul(FromBytesWithNulError),
+pub enum Error {
+    /// An error indicating that the nul byte was not at the end.
+    Nul,
     /// An error indicating that input bytes were not encoded as UTF-8.
     Utf8(Utf8Error),
 }
 
-impl From<Utf8Error> for FromBytesError {
+impl From<Utf8Error> for Error {
     #[inline]
-    fn from(err: Utf8Error) -> FromBytesError {
-        FromBytesError::Utf8(err)
+    fn from(err: Utf8Error) -> Error {
+        Error::Utf8(err)
     }
 }
 
-impl From<FromBytesWithNulError> for FromBytesError {
+#[cfg(feature = "std")]
+impl From<FromBytesWithNulError> for Error {
     #[inline]
-    fn from(err: FromBytesWithNulError) -> FromBytesError {
-        FromBytesError::Nul(err)
+    fn from(_: FromBytesWithNulError) -> Error {
+        Error::Nul
     }
 }
 
@@ -155,24 +170,22 @@ impl CUtf8 {
     /// Returns a C string containing `bytes`, or an error if a nul byte is in
     /// an unexpected position or if the bytes are not encoded as UTF-8.
     #[inline]
-    pub fn from_bytes(bytes: &[u8]) -> Result<&CUtf8, FromBytesError> {
-        if let Err(err) = CStr::from_bytes_with_nul(bytes) {
-            Err(err.into())
-        } else {
-            let s = str::from_utf8(bytes)?;
-            unsafe { Ok(CUtf8::from_str_unchecked(s)) }
-        }
+    pub fn from_bytes(bytes: &[u8]) -> Result<&CUtf8, Error> {
+        CUtf8::from_str(str::from_utf8(bytes)?)
     }
 
     /// Returns the UTF-8 string if it is terminated by a nul byte.
     #[inline]
-    pub fn from_str(s: &str) -> Result<&CUtf8, FromBytesWithNulError> {
-        CStr::from_bytes_with_nul(s.as_bytes()).map(|_| unsafe {
-            CUtf8::from_str_unchecked(s)
-        })
+    pub fn from_str(s: &str) -> Result<&CUtf8, Error> {
+        if let Some(0) = s.as_bytes().last() {
+            unsafe { Ok(CUtf8::from_str_unchecked(s)) }
+        } else {
+            Err(Error::Nul)
+        }
     }
 
     /// Returns the C string if it is valid UTF-8.
+    #[cfg(feature = "std")]
     #[inline]
     pub fn from_c_str(c: &CStr) -> Result<&CUtf8, Utf8Error> {
         let s = str::from_utf8(c.to_bytes_with_nul())?;
@@ -182,7 +195,20 @@ impl CUtf8 {
     /// Returns the raw C string if it is valid UTF-8 up to the first nul byte.
     #[inline]
     pub unsafe fn from_ptr<'a>(raw: *const c_char) -> Result<&'a CUtf8, Utf8Error> {
-        CUtf8::from_c_str(CStr::from_ptr(raw))
+        #[cfg(feature = "std")] {
+            CUtf8::from_c_str(CStr::from_ptr(raw))
+        }
+        #[cfg(not(feature = "std"))] {
+            use core::slice;
+
+            extern {
+                fn strlen(cs: *const c_char) -> usize;
+            }
+
+            let n = strlen(raw) + 1;
+            let s = str::from_utf8(slice::from_raw_parts(raw as *const u8, n))?;
+            Ok(CUtf8::from_str_unchecked(s))
+        }
     }
 
     /// Returns a C string without checking UTF-8 validity or for a trailing
@@ -199,6 +225,7 @@ impl CUtf8 {
     }
 
     /// Returns a C string without checking UTF-8 validity.
+    #[cfg(feature = "std")]
     #[inline]
     pub unsafe fn from_c_str_unchecked(c: &CStr) -> &CUtf8 {
         Self::from_bytes_unchecked(c.to_bytes_with_nul())
@@ -211,6 +238,7 @@ impl CUtf8 {
     }
 
     /// Returns `self` as a normal C string.
+    #[cfg(feature = "std")]
     #[inline]
     pub fn as_c_str(&self) -> &CStr {
         unsafe { CStr::from_bytes_with_nul_unchecked(self.as_bytes_with_nul()) }
