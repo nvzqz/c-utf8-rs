@@ -128,15 +128,25 @@ impl CUtf8Buf {
         CUtf8Buf(String::from("\0"))
     }
 
-    /// Appends a given string slice onto the end of this `CUtf8Buf`.
-    pub fn push_str(&mut self, s: &str) {
+    #[inline]
+    fn with_string<F, T>(&mut self, f: F) -> T
+        where F: FnOnce(&mut String) -> T
+    {
         // Remove nul byte
         unsafe { self.0.as_mut_vec().pop() };
 
-        self.0.push_str(s);
+        let val = f(&mut self.0);
 
         // Append nul byte
         unsafe { self.0.as_mut_vec().push(0) };
+
+        val
+    }
+
+    /// Appends a given string slice onto the end of this `CUtf8Buf`.
+    #[inline]
+    pub fn push_str(&mut self, s: &str) {
+        self.with_string(|inner| inner.push_str(s));
     }
 
     /// Converts `self` into a native UTF-8 encoded Rust
