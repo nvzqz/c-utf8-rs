@@ -91,7 +91,7 @@ impl<'a> fmt::Display for &'a mut CUtf8 {
 }
 
 impl<'a> Default for &'a CUtf8 {
-//    #[inline]
+    #[inline]
     fn default() -> &'a CUtf8 { c_utf8!("") }
 }
 
