@@ -1,0 +1,19 @@
+language: rust
+cache: cargo
+
+rust:
+  - 1.22.0
+  - stable
+  - beta
+  - nightly
+
+matrix:
+  include:
+    # Test 64-bit macOS
+    - rust: stable
+      os: osx
+    # Test extra features
+    - rust: nightly
+      env: FEATURES="--features try_from"
+
+script: ./travis.sh
