@@ -30,6 +30,7 @@
 //! [`CUtf8`]: struct.CUtf8.html
 
 #![deny(missing_docs)]
+#![cfg_attr(feature = "try_from", feature(try_from))]
 
 /// Creates a [`&'static CUtf8`](struct.CUtf8.html) from a native Rust [`str`]
 /// string literal, making it much easier to work with C APIs that are strict

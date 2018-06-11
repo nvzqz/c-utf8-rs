@@ -27,6 +27,39 @@ use std::str::{self, Utf8Error};
 #[derive(PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub struct CUtf8(str);
 
+#[cfg(feature = "try_from")]
+mod try_from {
+    use super::*;
+    use std::convert::TryFrom;
+
+    impl<'a> TryFrom<&'a [u8]> for &'a CUtf8 {
+        type Error = FromBytesError;
+
+        #[inline]
+        fn try_from(bytes: &[u8]) -> Result<&CUtf8, Self::Error> {
+            CUtf8::from_bytes(bytes)
+        }
+    }
+
+    impl<'a> TryFrom<&'a CStr> for &'a CUtf8 {
+        type Error = Utf8Error;
+
+        #[inline]
+        fn try_from(c: &CStr) -> Result<&CUtf8, Self::Error> {
+            CUtf8::from_c_str(c)
+        }
+    }
+
+    impl<'a> TryFrom<&'a str> for &'a CUtf8 {
+        type Error = FromBytesWithNulError;
+
+        #[inline]
+        fn try_from(s: &str) -> Result<&CUtf8, Self::Error> {
+            CUtf8::from_str(s)
+        }
+    }
+}
+
 impl AsRef<str> for CUtf8 {
     #[inline]
     fn as_ref(&self) -> &str {
