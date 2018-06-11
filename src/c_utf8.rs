@@ -35,7 +35,7 @@ pub struct CUtf8(str);
 #[cfg(feature = "try_from")]
 mod try_from {
     use super::*;
-    use std::convert::TryFrom;
+    use core::convert::TryFrom;
 
     impl<'a> TryFrom<&'a [u8]> for &'a CUtf8 {
         type Error = Error;
