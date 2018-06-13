@@ -66,11 +66,6 @@ mod try_from {
     }
 }
 
-#[cfg(feature = "std")]
-mod std {
-
-}
-
 impl AsRef<str> for CUtf8 {
     #[inline]
     fn as_ref(&self) -> &str {
