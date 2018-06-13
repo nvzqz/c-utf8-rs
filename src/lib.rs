@@ -1,4 +1,4 @@
-//! Operations on [C strings][c_str] that are [UTF-8]-encoded.
+//! Operations on [UTF-8]-encoded [C strings][c_str].
 //!
 //! The [`CUtf8`] type allows for:
 //!
