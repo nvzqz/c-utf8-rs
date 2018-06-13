@@ -97,11 +97,8 @@ impl<'a> From<&'a mut CUtf8> for CUtf8Buf {
 
 impl From<String> for CUtf8Buf {
     #[inline]
-    fn from(mut s: String) -> CUtf8Buf {
-        if !::is_nul_terminated(&s) {
-            unsafe { s.as_mut_vec().push(0) };
-        }
-        CUtf8Buf(s)
+    fn from(s: String) -> CUtf8Buf {
+        CUtf8Buf::from_string(s)
     }
 }
 
@@ -154,6 +151,16 @@ impl CUtf8Buf {
     #[inline]
     pub fn new() -> CUtf8Buf {
         CUtf8Buf(String::from("\0"))
+    }
+
+    /// Creates a new `CUtf8Buf` from a native Rust string, appending a nul
+    /// terminator if one doesn't already exist.
+    #[inline]
+    pub fn from_string(mut s: String) -> CUtf8Buf {
+        if !::is_nul_terminated(&s) {
+            unsafe { s.as_mut_vec().push(0) };
+        }
+        CUtf8Buf(s)
     }
 
     /// Creates a new `CUtf8Buf` from a native Rust string without checking for
