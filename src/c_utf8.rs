@@ -172,7 +172,7 @@ impl CUtf8 {
     /// Returns the UTF-8 string if it is terminated by a nul byte.
     #[inline]
     pub fn from_str(s: &str) -> Result<&CUtf8, Error> {
-        if let Some(&0) = s.as_bytes().last() {
+        if ::is_nul_terminated(s) {
             unsafe { Ok(CUtf8::from_str_unchecked(s)) }
         } else {
             Err(Error::Nul)

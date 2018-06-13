@@ -95,12 +95,20 @@ impl<'a> From<&'a mut CUtf8> for CUtf8Buf {
     }
 }
 
+impl From<String> for CUtf8Buf {
+    #[inline]
+    fn from(mut s: String) -> CUtf8Buf {
+        if !::is_nul_terminated(&s) {
+            unsafe { s.as_mut_vec().push(0) };
+        }
+        CUtf8Buf(s)
+    }
+}
+
 impl<'a> From<&'a str> for CUtf8Buf {
     #[inline]
     fn from(s: &str) -> CUtf8Buf {
-        let mut buf = CUtf8Buf::default();
-        buf.push_str(s);
-        buf
+        String::from(s).into()
     }
 }
 

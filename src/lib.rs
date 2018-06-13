@@ -112,3 +112,8 @@ pub type c_char = i8;
 
 #[cfg(feature = "std")]
 pub use std::os::raw::c_char;
+
+#[inline]
+fn is_nul_terminated(s: &str) -> bool {
+    s.as_bytes().last().cloned() == Some(0)
+}
