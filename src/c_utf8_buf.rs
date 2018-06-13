@@ -1,4 +1,5 @@
 use std::borrow::{Borrow, BorrowMut, ToOwned};
+use std::fmt;
 use std::ops::{Deref, DerefMut};
 
 use c_utf8::CUtf8;
@@ -29,6 +30,25 @@ impl DerefMut for CUtf8Buf {
     #[inline]
     fn deref_mut(&mut self) -> &mut CUtf8 {
         unsafe { CUtf8::from_str_unchecked_mut(&mut self.0) }
+    }
+}
+
+impl fmt::Write for CUtf8Buf {
+    #[inline]
+    fn write_str(&mut self, s: &str) -> fmt::Result {
+        self.push_str(s);
+        Ok(())
+    }
+
+    #[inline]
+    fn write_char(&mut self, c: char) -> fmt::Result {
+        self.push(c);
+        Ok(())
+    }
+
+    #[inline]
+    fn write_fmt(&mut self, args: fmt::Arguments) -> fmt::Result {
+        self.with_string(|s| s.write_fmt(args))
     }
 }
 
