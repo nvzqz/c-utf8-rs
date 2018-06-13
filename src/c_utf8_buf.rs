@@ -156,6 +156,13 @@ impl CUtf8Buf {
         CUtf8Buf(String::from("\0"))
     }
 
+    /// Creates a new `CUtf8Buf` from a native Rust string without checking for
+    /// a nul terminator.
+    #[inline]
+    pub unsafe fn from_string_unchecked(s: String) -> CUtf8Buf {
+        CUtf8Buf(s)
+    }
+
     #[inline]
     fn with_string<F, T>(&mut self, f: F) -> T
         where F: FnOnce(&mut String) -> T
