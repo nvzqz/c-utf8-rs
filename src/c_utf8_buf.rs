@@ -153,7 +153,7 @@ impl CUtf8Buf {
         CUtf8Buf(String::from("\0"))
     }
 
-    /// Creates a new `CUtf8Buf` from a native Rust string, appending a nul
+    /// Creates a new C string from a UTF-8 string, appending a nul
     /// terminator if one doesn't already exist.
     #[inline]
     pub fn from_string(mut s: String) -> CUtf8Buf {
@@ -163,8 +163,8 @@ impl CUtf8Buf {
         CUtf8Buf(s)
     }
 
-    /// Creates a new `CUtf8Buf` from a native Rust string without checking for
-    /// a nul terminator.
+    /// Creates a new C string from a native Rust string without checking for a
+    /// nul terminator.
     #[inline]
     pub unsafe fn from_string_unchecked(s: String) -> CUtf8Buf {
         CUtf8Buf(s)
