@@ -33,6 +33,20 @@ impl DerefMut for CUtf8Buf {
     }
 }
 
+impl fmt::Debug for CUtf8Buf {
+    #[inline]
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        (**self).fmt(f)
+    }
+}
+
+impl fmt::Display for CUtf8Buf {
+    #[inline]
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        (**self).fmt(f)
+    }
+}
+
 impl fmt::Write for CUtf8Buf {
     #[inline]
     fn write_str(&mut self, s: &str) -> fmt::Result {
