@@ -32,6 +32,10 @@
 #![deny(missing_docs)]
 #![cfg_attr(not(feature = "std"), no_std)]
 #![cfg_attr(feature = "try_from", feature(try_from))]
+#![cfg_attr(all(test, nightly), feature(test))]
+
+#[cfg(all(test, nightly))]
+extern crate test;
 
 #[cfg(feature = "std")]
 use std as core;

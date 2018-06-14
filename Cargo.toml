@@ -12,7 +12,8 @@ repository    = "https://github.com/nvzqz/c-utf8-rs"
 [badges]
 travis-ci = { repository = "nvzqz/c-utf8-rs" }
 
-[dependencies]
+[build-dependencies]
+version_check = "0.1"
 
 [features]
 default  = ["std"]

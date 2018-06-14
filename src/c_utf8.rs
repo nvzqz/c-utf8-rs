@@ -257,3 +257,18 @@ impl CUtf8 {
         self.as_str_with_nul().as_bytes()
     }
 }
+
+#[cfg(all(test, nightly))]
+mod benches {
+    use super::*;
+    use test::{Bencher, black_box};
+
+    #[bench]
+    fn from_bytes(b: &mut Bencher) {
+        let s = "abcdéfghîjklmnöpqrstúvwxÿz\0";
+        b.iter(|| {
+            let s = black_box(s.as_bytes());
+            black_box(CUtf8::from_bytes(s).unwrap());
+        });
+    }
+}
