@@ -150,7 +150,7 @@ impl CUtf8Buf {
     /// Creates a new empty `CUtf8Buf`.
     #[inline]
     pub fn new() -> CUtf8Buf {
-        CUtf8Buf(String::from("\0"))
+        CUtf8Buf(unsafe { String::from_utf8_unchecked(vec![0; 1]) })
     }
 
     /// Creates a new C string from a UTF-8 string, appending a nul
