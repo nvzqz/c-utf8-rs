@@ -121,10 +121,18 @@ impl fmt::Display for CUtf8 {
 
 impl<'a> Default for &'a CUtf8 {
     #[inline]
-    fn default() -> &'a CUtf8 { c_utf8!("") }
+    fn default() -> &'a CUtf8 { CUtf8::EMPTY }
 }
 
+// Without this, the documentation shows the macro expansion, which is noisy
+const EMPTY: &CUtf8 = c_utf8!("");
+
 impl CUtf8 {
+    /// A static &#8220;empty&#8221; borrowed C string.
+    ///
+    /// The string is still nul-terminated, which makes it safe to pass to C.
+    pub const EMPTY: &'static CUtf8 = EMPTY;
+
     /// Returns a C string containing `bytes`, or an error if a nul byte is in
     /// an unexpected position or if the bytes are not encoded as UTF-8.
     #[inline]
@@ -167,6 +175,48 @@ impl CUtf8 {
             let s = str::from_utf8(slice::from_raw_parts(raw as *const u8, n))?;
             Ok(CUtf8::from_str_unchecked(s))
         }
+    }
+
+    /// Returns the number of bytes without taking into account the trailing nul
+    /// byte.
+    ///
+    /// This behavior is the same as that of
+    /// [`str::len`](https://doc.rust-lang.org/std/primitive.str.html#method.len)
+    /// where the length is not measured in
+    /// [`char`](https://doc.rust-lang.org/std/primitive.char.html)s.
+    ///
+    /// # Examples
+    ///
+    /// Basic usage:
+    ///
+    /// ```
+    /// # #[macro_use] extern crate c_utf8; fn main() {
+    /// let s = c_utf8!("Hey");
+    ///
+    /// assert_eq!(s.len(), 3);
+    /// # }
+    /// ```
+    #[inline]
+    pub fn len(&self) -> usize {
+        self.0.len().wrapping_sub(1)
+    }
+
+    /// Returns `true` if `self` contains 0 bytes, disregarding the trailing nul
+    /// byte.
+    ///
+    /// # Examples
+    ///
+    /// Basic usage:
+    ///
+    /// ```
+    /// let s = c_utf8::CUtf8::EMPTY;
+    ///
+    /// assert!(s.is_empty());
+    /// assert_eq!(s.len(), 0);
+    /// ```
+    #[inline]
+    pub fn is_empty(&self) -> bool {
+        self.0.len() == 1
     }
 
     /// Returns a C string without checking UTF-8 validity or for a trailing
