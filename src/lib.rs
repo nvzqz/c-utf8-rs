@@ -74,15 +74,15 @@ macro_rules! c_utf8 {
     }
 }
 
-mod c_utf8;
-
-pub use self::c_utf8::*;
-
 #[cfg(feature = "std")]
 mod c_utf8_buf;
+mod c_utf8;
+mod error;
 
 #[cfg(feature = "std")]
 pub use self::c_utf8_buf::*;
+pub use self::c_utf8::*;
+pub use self::error::*;
 
 /// Equivalent to C's `char` type.
 #[allow(non_camel_case_types)]

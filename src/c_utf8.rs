@@ -2,12 +2,13 @@ use core::fmt;
 use core::str::{self, Utf8Error};
 
 #[cfg(feature = "std")]
-use std::ffi::{CStr, FromBytesWithNulError, OsStr};
+use std::ffi::{CStr, OsStr};
 
 #[cfg(feature = "std")]
 use std::path::Path;
 
 use c_char;
+use error::Error;
 
 /// Like [`CStr`](https://doc.rust-lang.org/std/ffi/struct.CStr.html), except
 /// with the guarantee of being encoded as valid [UTF-8].
@@ -121,30 +122,6 @@ impl fmt::Display for CUtf8 {
 impl<'a> Default for &'a CUtf8 {
     #[inline]
     fn default() -> &'a CUtf8 { c_utf8!("") }
-}
-
-/// The error for converting types to [`CUtf8`](struct.CUtf8.html).
-#[derive(Clone, Debug)]
-pub enum Error {
-    /// An error indicating that the nul byte was not at the end.
-    Nul,
-    /// An error indicating that input bytes were not encoded as UTF-8.
-    Utf8(Utf8Error),
-}
-
-impl From<Utf8Error> for Error {
-    #[inline]
-    fn from(err: Utf8Error) -> Error {
-        Error::Utf8(err)
-    }
-}
-
-#[cfg(feature = "std")]
-impl From<FromBytesWithNulError> for Error {
-    #[inline]
-    fn from(_: FromBytesWithNulError) -> Error {
-        Error::Nul
-    }
 }
 
 impl CUtf8 {
