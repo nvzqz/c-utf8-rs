@@ -16,11 +16,13 @@
 //! #[macro_use]
 //! extern crate c_utf8;
 //!
-//! fn main() {
-//!     let string = c_utf8!("Heyo!");
-//!     let bytes  = [72, 101, 121, 111, 33, 0];
+//! use c_utf8::CUtf8;
 //!
-//!     assert_eq!(string.as_bytes_with_nul(), &bytes);
+//! static MESSAGE: &CUtf8 = c_utf8!("Heyo!");
+//!
+//! fn main() {
+//!     let bytes = [72, 101, 121, 111, 33, 0];
+//!     assert_eq!(MESSAGE.as_bytes_with_nul(), &bytes);
 //! }
 //! ```
 //!
@@ -50,6 +52,9 @@ use std as core;
 /// have one. This is because C APIs will only work with the memory up to the
 /// first 0 byte.
 ///
+/// This macro can even be evaluated within a constant expression, allowing for
+/// having static defaults and more for enclosing types.
+///
 /// # Examples
 ///
 /// The input string will _always_ end with a trailing 0 byte:
@@ -70,7 +75,12 @@ use std as core;
 #[macro_export]
 macro_rules! c_utf8 {
     ($s:expr) => {
-        unsafe { $crate::CUtf8::from_str_unchecked(concat!($s, "\0")) }
+        unsafe {
+            // An internal type that allows for converting static Rust string
+            // slices into static CUtf8 slices within a constant expression
+            union _Ref<'a> { s: &'a str, c: &'a $crate::CUtf8 }
+            _Ref { s: concat!($s, "\0") }.c
+        }
     }
 }
 
