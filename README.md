@@ -54,8 +54,9 @@ impl Window {
 }
 ```
 
-Creating a `&CUtf8` instance to interface with the above code can be done easily
-via the `c_utf8!` macro:
+Creating a [`&CUtf8`](https://docs.rs/c_utf8/*/c_utf8/struct.CUtf8.html)
+instance to interface with the above code can be done easily via the
+[`c_utf8!`](https://docs.rs/c_utf8/*/c_utf8/macro.c_utf8.html) macro:
 
 ```rust
 window.set_title(c_utf8!("MyAwesomeApp"));
