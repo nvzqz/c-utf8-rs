@@ -26,8 +26,8 @@ use error::Error;
 ///   end of the string.
 ///
 /// - Encoded as valid [UTF-8], which allows for passing around native Rust
-///   &#8220;[`str`](https://doc.rust-lang.org/std/primitive.str.html)&#8221;
-///   strings with ease.
+///   [`str`](https://doc.rust-lang.org/std/primitive.str.html) strings with
+///   ease.
 ///
 /// [UTF-8]: https://en.wikipedia.org/wiki/UTF-8
 #[derive(PartialEq, Eq, Hash, PartialOrd, Ord)]
