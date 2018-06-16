@@ -1,16 +1,17 @@
 //! Operations on [UTF-8]-encoded [C strings][c_str].
 //!
-//! The [`CUtf8`] type allows for:
+//! The [`CUtf8`] and [`CUtf8Buf`] types are guaranteed to be:
 //!
-//! - [Nul (Ø) terminated C strings][c_str]
-//!   in order for C APIs to only access memory that is properly owned.
+//! - [Nul (Ø) terminated C strings][c_str] in order to more safely ensure that
+//!   C APIs only access memory that is properly owned.
 //!
 //! - Encoded as valid [UTF-8], allowing for passing around native Rust [`str`]
 //!   strings with ease.
 //!
 //! # Examples
 //!
-//! A [`CUtf8`] slice will _always_ end with a trailing 0 byte:
+//! A [`CUtf8`] slice can be created via the [`c_utf8!`](macro.c_utf8.html)
+//! macro, which ensures it will _always_ end with a trailing 0 byte:
 //!
 //! ```
 //! #[macro_use]
@@ -26,10 +27,11 @@
 //! }
 //! ```
 //!
-//! [UTF-8]:   https://en.wikipedia.org/wiki/UTF-8
-//! [c_str]:   https://en.wikipedia.org/wiki/Null-terminated_string
-//! [`str`]:   https://doc.rust-lang.org/std/primitive.str.html
-//! [`CUtf8`]: struct.CUtf8.html
+//! [UTF-8]:      https://en.wikipedia.org/wiki/UTF-8
+//! [c_str]:      https://en.wikipedia.org/wiki/Null-terminated_string
+//! [`str`]:      https://doc.rust-lang.org/std/primitive.str.html
+//! [`CUtf8`]:    struct.CUtf8.html
+//! [`CUtf8Buf`]: struct.CUtf8Buf.html
 
 #![deny(missing_docs)]
 #![cfg_attr(not(feature = "std"), no_std)]
@@ -48,12 +50,10 @@ use std as core;
 ///
 /// # Usage
 ///
-/// Although the input string can have a 0 byte, it is highly recommended to not
-/// have one. This is because C APIs will only work with the memory up to the
-/// first 0 byte.
-///
-/// This macro can even be evaluated within a constant expression, allowing for
-/// having static defaults and more for enclosing types.
+/// Although the input string can have a 0 byte, it is **highly recommended** to
+/// not have one. This is because C APIs will only work with the memory up to
+/// the first 0 byte. In the future, it will be very likely be a **hard error**
+/// to have a 0 byte within the string literal.
 ///
 /// # Examples
 ///
@@ -69,6 +69,17 @@ use std as core;
 ///
 ///     assert_eq!(string.as_bytes_with_nul(), &bytes);
 /// }
+/// ```
+///
+/// The macro can even be evaluated within a constant expression. This allows
+/// for having instances of types with `&'static CUtf8` fields.
+///
+/// ```
+/// # #[macro_use] extern crate c_utf8; use c_utf8::CUtf8; fn main() {
+/// static APP_NAME: &CUtf8 = c_utf8!(env!("CARGO_PKG_NAME"));
+///
+/// assert_eq!(APP_NAME.as_str_with_nul(), "c_utf8\0");
+/// # }
 /// ```
 ///
 /// [`str`]: https://doc.rust-lang.org/std/primitive.str.html
