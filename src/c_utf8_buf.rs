@@ -35,6 +35,20 @@ use c_utf8::CUtf8;
 #[derive(Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub struct CUtf8Buf(String);
 
+impl PartialEq<CUtf8> for CUtf8Buf {
+    #[inline]
+    fn eq(&self, other: &CUtf8) -> bool {
+        (**self) == *other
+    }
+}
+
+impl PartialEq<CUtf8Buf> for CUtf8 {
+    #[inline]
+    fn eq(&self, other: &CUtf8Buf) -> bool {
+        other.eq(self)
+    }
+}
+
 impl Default for CUtf8Buf {
     #[inline]
     fn default() -> CUtf8Buf {
