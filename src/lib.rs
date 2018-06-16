@@ -8,15 +8,32 @@
 //! - Encoded as valid [UTF-8], allowing for passing around native Rust [`str`]
 //!   strings with ease.
 //!
+//! # Usage
+//!
+//! This crate is available [on crates.io](https://crates.io/crates/c_utf8) and
+//! can be used by adding the following to your project's
+//! [`Cargo.toml`](https://doc.rust-lang.org/cargo/reference/manifest.html):
+//!
+//! ```toml
+//! [dependencies]
+//! c_utf8 = "0.1"
+//! ```
+//!
+//! and this to your crate root (`lib.rs` or `main.rs`):
+//!
+//! ```
+//! #[macro_use] // enables c_utf8! macro
+//! extern crate c_utf8;
+//! # fn main() {}
+//! ```
+//!
 //! # Examples
 //!
 //! A [`CUtf8`] slice can be created via the [`c_utf8!`](macro.c_utf8.html)
 //! macro, which ensures it will _always_ end with a trailing 0 byte:
 //!
 //! ```
-//! #[macro_use]
-//! extern crate c_utf8;
-//!
+//! # #[macro_use] extern crate c_utf8;
 //! use c_utf8::CUtf8;
 //!
 //! static MESSAGE: &CUtf8 = c_utf8!("Heyo!");
