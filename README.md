@@ -22,7 +22,7 @@ since 2008, including Rust with its [`str`] primitive.
     </a>
 </p>
 
-It is capable of representing all 1,112,064 code points of the [Unicode]
+[UTF-8] is capable of representing all 1,112,064 code points of the [Unicode]
 standard. Code points are variable-width, ranging from 8 to 32 bits wide.
 
 ## Where does UTF-8 appear in C?
