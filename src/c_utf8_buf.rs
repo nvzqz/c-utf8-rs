@@ -1,12 +1,37 @@
 use std::borrow::{Borrow, BorrowMut, ToOwned};
 use std::fmt;
+use std::iter::FromIterator;
 use std::ops::{Deref, DerefMut};
 
 use c_utf8::CUtf8;
 
-/// An owned, mutable UTF-8 encoded C string (akin to
-/// [`String`](https://doc.rust-lang.org/std/string/struct.String.html) or
-/// [`PathBuf`](https://doc.rust-lang.org/std/path/struct.PathBuf.html)).
+/// An owned, mutable UTF-8 encoded C string (akin to [`String`] or
+/// [`PathBuf`]).
+///
+/// # Examples
+///
+/// This type retains certain behaviors that are expected from [`String`] such
+/// as calling [`.collect()`][collect] on iterators.
+///
+/// ```
+/// use c_utf8::CUtf8Buf;
+///
+/// let strings = vec![
+///     "Hello ",
+///     "there, ",
+///     "fellow ",
+///     "human!"
+/// ];
+///
+/// let joined = strings.into_iter().collect::<CUtf8Buf>();
+/// let bytes  = joined.as_bytes_with_nul();
+///
+/// assert_eq!(bytes, b"Hello there, fellow human!\0");
+/// ```
+///
+/// [`String`]:  https://doc.rust-lang.org/std/string/struct.String.html
+/// [`PathBuf`]: https://doc.rust-lang.org/std/path/struct.PathBuf.html
+/// [collect]:   https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.collect
 #[derive(Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub struct CUtf8Buf(String);
 
@@ -30,6 +55,13 @@ impl DerefMut for CUtf8Buf {
     #[inline]
     fn deref_mut(&mut self) -> &mut CUtf8 {
         unsafe { CUtf8::from_str_unchecked_mut(&mut self.0) }
+    }
+}
+
+impl<T> FromIterator<T> for CUtf8Buf where String: FromIterator<T> {
+    #[inline]
+    fn from_iter<I: IntoIterator<Item = T>>(it: I) -> CUtf8Buf {
+        CUtf8Buf::from_string(it.into_iter().collect())
     }
 }
 
