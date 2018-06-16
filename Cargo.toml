@@ -8,6 +8,8 @@ description   = "UTF-8 encoded C string types"
 documentation = "https://docs.rs/c_utf8"
 homepage      = "https://github.com/nvzqz/c-utf8-rs"
 repository    = "https://github.com/nvzqz/c-utf8-rs"
+keywords      = ["c", "string", "utf-8", "unicode", "text"]
+include       = ["Cargo.toml", "src/**/*.rs", "README*", "CHANGELOG*", "LICENSE*"]
 
 [badges]
 travis-ci = { repository = "nvzqz/c-utf8-rs" }
