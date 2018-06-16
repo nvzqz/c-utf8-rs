@@ -78,7 +78,7 @@ impl AsRef<str> for CUtf8 {
 impl AsRef<CStr> for CUtf8 {
     #[inline]
     fn as_ref(&self) -> &CStr {
-        unsafe { CStr::from_ptr(self.0.as_ptr() as *const c_char) }
+        self.as_c_str()
     }
 }
 
