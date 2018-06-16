@@ -57,7 +57,7 @@ use std as core;
 ///
 /// # Examples
 ///
-/// The input string will _always_ end with a trailing 0 byte:
+/// The resulting string will _always_ end with a 0 byte:
 ///
 /// ```
 /// #[macro_use]
