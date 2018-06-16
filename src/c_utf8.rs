@@ -108,7 +108,7 @@ impl AsRef<OsStr> for CUtf8 {
 impl fmt::Debug for CUtf8 {
     #[inline]
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        self.as_str().fmt(f)
+        self.as_str_with_nul().fmt(f)
     }
 }
 
