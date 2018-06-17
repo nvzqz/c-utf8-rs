@@ -1,4 +1,4 @@
-# _C_-Style _UTF-8_ Strings for Rust
+# C-Style UTF-8 Strings for Rust
 
 [![Build status][travis-badge]][travis]
 ![Crate version](https://img.shields.io/crates/v/c_utf8.svg)
