@@ -4,8 +4,8 @@
 ![Crate version](https://img.shields.io/crates/v/c_utf8.svg)
 ![rustc version](https://img.shields.io/badge/rustc-^1.20.0-blue.svg)
 
-This project makes it easier to establish guarantees when interfacing with C
-APIs that require passing around [UTF-8] encoded strings.
+This project makes it easier to establish guarantees when interfacing with
+[nul-terminated C string][c_str] APIs that require [UTF-8] encoding.
 
 [Documentation](https://docs.rs/c_utf8/)
 
@@ -93,6 +93,7 @@ at your option.
 [`Cargo.toml`]: https://doc.rust-lang.org/cargo/reference/manifest.html
 [`str`]:        https://doc.rust-lang.org/std/primitive.str.html
 [sdl]:          https://en.wikipedia.org/wiki/Simple_DirectMedia_Layer
+[c_str]:        https://en.wikipedia.org/wiki/Null-terminated_string
 [UTF-8]:        https://en.wikipedia.org/wiki/UTF-8
 [Unicode]:      https://en.wikipedia.org/wiki/Unicode
 
