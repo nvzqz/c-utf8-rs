@@ -116,6 +116,7 @@ macro_rules! c_utf8 {
 mod c_utf8_buf;
 mod c_utf8;
 mod error;
+mod ext;
 
 #[cfg(feature = "std")]
 pub use self::c_utf8_buf::*;
@@ -154,8 +155,3 @@ pub type c_char = i8;
 
 #[cfg(feature = "std")]
 pub use std::os::raw::c_char;
-
-#[inline]
-fn is_nul_terminated(s: &str) -> bool {
-    s.as_bytes().last().cloned() == Some(0)
-}

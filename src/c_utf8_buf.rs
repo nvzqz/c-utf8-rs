@@ -4,6 +4,7 @@ use std::iter::FromIterator;
 use std::ops::{Deref, DerefMut};
 
 use c_utf8::CUtf8;
+use ext::Ext;
 
 /// An owned, mutable UTF-8 encoded C string (akin to [`String`] or
 /// [`PathBuf`]).
@@ -217,7 +218,7 @@ impl CUtf8Buf {
     /// terminator if one doesn't already exist.
     #[inline]
     pub fn from_string(mut s: String) -> CUtf8Buf {
-        if !::is_nul_terminated(&s) {
+        if !s.is_nul_terminated() {
             unsafe { s.as_mut_vec().push(0) };
         }
         CUtf8Buf(s)

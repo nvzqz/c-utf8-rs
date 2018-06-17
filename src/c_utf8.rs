@@ -9,6 +9,7 @@ use std::path::Path;
 
 use c_char;
 use error::Error;
+use ext::Ext;
 
 /// Like [`CStr`](https://doc.rust-lang.org/std/ffi/struct.CStr.html), except
 /// with the guarantee of being encoded as valid [UTF-8].
@@ -143,7 +144,7 @@ impl CUtf8 {
     /// Returns the UTF-8 string if it is terminated by a nul byte.
     #[inline]
     pub fn from_str(s: &str) -> Result<&CUtf8, Error> {
-        if ::is_nul_terminated(s) {
+        if s.is_nul_terminated() {
             unsafe { Ok(CUtf8::from_str_unchecked(s)) }
         } else {
             Err(Error::Nul)
