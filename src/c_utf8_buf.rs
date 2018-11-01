@@ -262,16 +262,30 @@ impl CUtf8Buf {
     /// [`String`](https://doc.rust-lang.org/std/string/struct.String.html).
     #[inline]
     pub fn into_string(self) -> String {
-        let mut string = self.0;
+        let mut string = self.into_string_with_nul();
         unsafe { string.as_mut_vec().pop() };
         string
+    }
+
+    /// Converts `self` into a native UTF-8 encoded Rust
+    /// [`String`](https://doc.rust-lang.org/std/string/struct.String.html) with
+    /// a trailing 0 byte.
+    #[inline]
+    pub fn into_string_with_nul(self) -> String {
+        self.0
     }
 
     /// Converts `self` into its underlying bytes.
     #[inline]
     pub fn into_bytes(self) -> Vec<u8> {
-        let mut bytes = self.0.into_bytes();
+        let mut bytes = self.into_bytes_with_nul();
         bytes.pop();
         bytes
+    }
+
+    /// Converts `self` into its underlying bytes with a trailing 0 byte.
+    #[inline]
+    pub fn into_bytes_with_nul(self) -> Vec<u8> {
+        self.into_string_with_nul().into()
     }
 }
