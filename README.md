@@ -9,6 +9,13 @@ This project makes it easier to establish guarantees when interfacing with
 
 [Documentation](https://docs.rs/c_utf8/)
 
+<a href="https://www.patreon.com/nvzqz">
+    <img src="https://c5.patreon.com/external/logo/become_a_patron_button.png" alt="Become a Patron!" height="35">
+</a>
+<a href="https://www.paypal.me/nvzqz">
+    <img src="https://buymecoffee.intm.org/img/button-paypal-white.png" alt="Buy me a coffee" height="35">
+</a>
+
 ## What is UTF-8?
 
 [UTF-8] is the character encoding chosen by much of the programming community
